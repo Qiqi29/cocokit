@@ -1,0 +1,23 @@
+{
+    "name": "create-cocokit",
+    "version": "0.1.0",
+    "description": "CoCoKit 创建程序",
+    "author": "Qiqi29",
+    "keywords": [
+        "cocokit",
+        "coco"
+    ],
+    "files": [
+        "bin",
+        "template"
+    ],
+    "bin": {
+        "create-cocokit": "./bin/init.js"
+    },
+    "scripts": {},
+    "dependencies": {
+        "@clack/prompts": "^0.10.1",
+        "shelljs": "^0.10.0"
+    },
+    "license": "MIT"
+}

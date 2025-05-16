@@ -1,0 +1,148 @@
+{
+    "可见控件基础模板": {
+        "prefix": "widget",
+        "body": [
+            "/**",
+            " * @author: 作者",
+            " * 一段简短的描述，介绍你的控件",
+            " */",
+            "",
+            "import { CoCoVisibleWidget, Color, VType } from 'cocokit'",
+            "const widget = new CoCoVisibleWidget()",
+            "",
+            "var window = this.window",
+            "var document = this.document",
+            "",
+            "",
+            "widget.config({",
+            "    name: '${1:我的控件}',",
+            "    id: 'QII_WIDGET_ID',",
+            "    version: '1.0.0',",
+            "    icon: 'https://static.bcmcdn.com/coco/player/unstable/H1l0pZLexl.image/svg+xml',",
+            "    width: 100,",
+            "    height: 100,",
+            "})",
+            "",
+            "",
+            "// 开始你的创作",
+            "",
+            "",
+            "exports.types = widget.types()",
+            "exports.widget = widget.build()"
+        ],
+        "description": "可见控件基础模板"
+    },
+    "不可见控件基础模板": {
+        "prefix": "widgetin",
+        "body": [
+            "/**",
+            " * @author: 作者",
+            " * 一段简短的描述，介绍你的控件",
+            " */",
+            "",
+            "import { CoCoInvisibleWidget, Color, VType } from 'cocokit'",
+            "const widget = new CoCoInvisibleWidget()",
+            "",
+            "var window = this.window",
+            "var document = this.document",
+            "",
+            "",
+            "widget.config({",
+            "    name: '${1:我的控件}',",
+            "    id: 'QII_WIDGET_ID',",
+            "    version: '1.0.0',",
+            "    icon: 'https://static.bcmcdn.com/coco/player/unstable/H1l0pZLexl.image/svg+xml',",
+            "})",
+            "",
+            "",
+            "// 开始你的创作",
+            "",
+            "",
+            "exports.types = widget.types()",
+            "exports.widget = widget.build()"
+        ],
+        "description": "不可见控件基础模板"
+    },
+    "创建一个属性": {
+        "prefix": "wprop",
+        "body": [
+            "widget.prop('${1:文本}', 'text', '你好，CoCo')",
+        ],
+        "description": "创建一个属性"
+    },
+    "创建一个事件": {
+        "prefix": "wevent",
+        "body": [
+            "widget.event('${1:被点击时}', 'onClick')",
+        ],
+        "description": "创建一个事件"
+    },
+    "创建一个复杂事件": {
+        "prefix": "weventon",
+        "body": [
+            "widget.event('被', 'on', {",
+            "    dropdown: [",
+            "        { 点击时: 'Click', 按下时: 'Dowm', 松开时: 'Up' }",
+            "    ],",
+            "    params: [",
+            "        { key: 'data', label: '数据', valueType: VType.string }",
+            "    ],",
+            "})"
+        ],
+        "description": "创建一个复杂事件"
+    },
+    "初始化控件数据": {
+        "prefix": "winit",
+        "body": [
+            "widget.init(function () {",
+            "    this.${1:data} = ''",
+            "})"
+        ],
+        "description": "初始化控件数据"
+    },
+    "创建一个方法": {
+        "prefix": "wmethod",
+        "body": [
+            "widget.method('${1:方法名}', 'methodKey', {",
+            "    params: [",
+            "        { key: 'data', label: '数据', defaultValue: '', valueType: VType.string },",
+            "    ],",
+            "    color: Color.blue,",
+            "}, ",
+            "function (data) {",
+            "",
+            "})",
+        ],
+        "description": "创建一个方法"
+    },
+    "创建一个内部方法": {
+        "prefix": "wmethodin",
+        "body": [
+            "widget.inMethod('${1:methodKey}', function (data) {",
+            "",
+            "})",
+        ],
+        "description": "创建一个内部方法"
+    },
+    "渲染控件": {
+        "prefix": "wrender",
+        "body": [
+            "widget.render(function () { ",
+            "    return (<>",
+            "",
+            "        <div className={this.__widgetId}>",
+            "            <span>{this.text}</span>$0",
+            "        </div>",
+            "",
+            "        <style>{`",
+            "            .${this.__widgetId} {",
+            "                width: 100%;",
+            "                height: 100%;",
+            "            }",
+            "        `}</style>",
+            "    </>)",
+            "})"
+        ],
+        "description": "渲染控件"
+    },
+}
