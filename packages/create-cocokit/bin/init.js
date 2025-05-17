@@ -58,12 +58,12 @@ async function init() {
     prompts.intro(`${color.blue}${color.bold}创建 CoCoKit 项目${color.reset}`)
 
     // 获取最新的 cocokit 版本
-    const cocokitVersion = await getLatestVersion()
+    const cocokitVersion = await getLatestVersion('cocokit')
     if (!cocokitVersion) {
         prompts.cancel("无法获取最新的 CoCoKit 版本号")
         return process.exit(0)
     }
-    packageJson.devDependencies['cocokit'] = cocokitVersion
+    packageJson.dependencies['cocokit'] = cocokitVersion
 
 
     // 1. 获取项目名称
