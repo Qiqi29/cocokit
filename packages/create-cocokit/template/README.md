@@ -39,7 +39,7 @@ const widget = new CoCoVisibleWidget()
 - `wevent` 创建一个事件
 - `wmethod` 创建一个方法
 - `wmethodin` 创建一个内部方法
-- `crender` 渲染控件
+- `wrender` 渲染控件
 
 
 ## 打包控件
