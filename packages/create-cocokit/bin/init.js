@@ -21,8 +21,11 @@ const packageJson = {
         "build": "cocokit build",
         "watch": "onchange \"**/*.jsx\" -- npm run build {{changed}}"
     },
+    // 动态获取最新版
+    dependencies: {
+        "cocokit": ""
+    },
     devDependencies: {
-        "cocokit": "",
         "@babel/core": "^7.26.10",
         "@babel/preset-env": "^7.26.9",
         "@babel/preset-react": "^7.26.3",

@@ -1,6 +1,6 @@
 {
     "name": "cocokit",
-    "version": "0.1.2",
+    "version": "0.1.3",
     "description": "CoCo 控件开发包",
     "author": "Qiqi29",
     "main": "./index.js",
