@@ -81,9 +81,8 @@ export function replaceNewline(content) {
 
 // 控件日志输出
 export class WiegetLog {
-    constructor() {
-        this.timeMeasurements = {}
-    }
+    constructor() {}
+    
     #replaceData(args) {
         return args.map(arg => {
             if (typeof arg === 'object') {
@@ -92,6 +91,7 @@ export class WiegetLog {
             return arg
         }).join(' ')
     }
+    
     info(thisWidget, ...args) {
         console.log(...args)
         thisWidget.widgetLog(this.#replaceData(args))

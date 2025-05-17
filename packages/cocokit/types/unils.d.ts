@@ -86,7 +86,6 @@ export declare function replaceNewline(content: string): string;
  * 控件日志输出
  */
 export declare class WiegetLog {
-    private timeMeasurements;
     /**
      * 替换数据中的对象为字符串
      * @private
