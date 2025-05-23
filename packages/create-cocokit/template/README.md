@@ -13,11 +13,11 @@ npm install
 ### 创建控件
 在项目中任意文件夹内新建一个 JSX 文件，例如 `我的控件.jsx`，在代码中导入 `cocokit` 模块。
 
-控件分为 `可见控件` 和 `不可见控件`，分别对应 `CoCoVisibleWidget` 和 `CoCoInvisibleWidget` 两个类。
+控件分为 `可见控件` 和 `不可见控件`，分别对应 `CoCoWidget` 和 `CoCoInvisibleWidget` 两个类。
 
 ~~~ jsx
-import { CoCoVisibleWidget } from 'cocokit'
-const widget = new CoCoVisibleWidget()
+import { CoCoWidget } from 'cocokit'
+const widget = new CoCoWidget()
 ~~~
 
 导入完成后，就可以开始编写控件啦，详细使用方法参考 `widgets` 文件夹中的示例控件。
@@ -90,4 +90,3 @@ widget.render(function () { return (
 - `VType` 属性类型
 - `isUrl()` 判断一个字符串是否是一个 URL 地址
 - `replaceNewLine()` 替换字符串中的换行符
-- `WiegetLog <class>` 日志输出，可同时在编辑器和浏览器中打印数据

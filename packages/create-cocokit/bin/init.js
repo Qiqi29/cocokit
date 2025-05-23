@@ -1,19 +1,12 @@
 #! /usr/bin/env node
 const prompts = require('@clack/prompts')
 const shell = require('shelljs')
+const chalk = require('chalk')
 const path = require('path')
 const fs = require('fs')
 
 
-const color = {
-    reset: '\x1b[0m',
-    bold: '\x1b[1m',
-    bright: '\x1b[1m',
-    green: '\x1b[32m',
-    blue: '\x1b[34m',
-}
-
-// 项目配置文件
+// 项目配置文件模板
 const packageJson = {
     name: "cocokit-project",
     version: "0.1.0",
@@ -21,7 +14,6 @@ const packageJson = {
         "build": "cocokit build",
         "watch": "onchange \"**/*.jsx\" -- npm run build {{changed}}"
     },
-    // 动态获取最新版
     dependencies: {
         "cocokit": ""
     },
@@ -38,11 +30,11 @@ const packageJson = {
     build_config: {
         "前缀标签": "",
         "加版本号": true,
-        "代码压缩": false
     }
 }
 
 
+// 获取最新版本号
 async function getLatestVersion(packageName) {
     return new Promise((resolve) => {
         shell.exec(`npm view ${packageName} version --silent`, { silent: true }, (code, stdout) => {
@@ -52,12 +44,12 @@ async function getLatestVersion(packageName) {
 }
 
 
+// 初始化项目
 async function init() {
-
     console.log()
-    prompts.intro(`${color.blue}${color.bold}创建 CoCoKit 项目${color.reset}`)
+    prompts.intro(chalk.blue.bold('创建 CoCoKit 项目'))
 
-    // 获取最新的 cocokit 版本
+    // 获取最新的 CoCoKit 版本
     const cocokitVersion = await getLatestVersion('cocokit')
     if (!cocokitVersion) {
         prompts.cancel("无法获取最新的 CoCoKit 版本号")
@@ -66,7 +58,7 @@ async function init() {
     packageJson.dependencies['cocokit'] = cocokitVersion
 
 
-    // 1. 获取项目名称
+    // 1. 设置项目名称
     const projectName = await prompts.text({
         message: '项目名称：',
         placeholder: '我的控件库',
@@ -81,7 +73,7 @@ async function init() {
     }
 
 
-    // 2. 获取控件前缀标签
+    // 2. 设置控件前缀标签
     const addPrefixText = await prompts.confirm({
         message: '添加控件前缀标签？',
         initialValue: true,
@@ -90,7 +82,6 @@ async function init() {
         prompts.cancel("已取消创建项目")
         return process.exit(0)
     }
-
     if (addPrefixText) {
         const prefixText = await prompts.text({
             message: '设置你的自定义前缀标签：',
@@ -105,7 +96,7 @@ async function init() {
     }
 
 
-    // 3. 获取是否添加版本号
+    // 3. 设置是否添加版本号
     const addVersion = await prompts.confirm({
         message: '打包时添加版本后缀？',
         initialValue: true,
@@ -122,7 +113,6 @@ async function init() {
 
     // 创建项目文件夹
     shell.mkdir(projectName)
-
     // 复制文件
     const sourceDir = path.join(__dirname, '../template')
     const files = shell.ls('-A', sourceDir)
@@ -141,18 +131,13 @@ async function init() {
     fs.writeFileSync(`${projectName}/package.json`, jsonData)
 
 
+    // 输出信息
     let doneMessage = ''
-
-    doneMessage += `${color.green}创建完成 (≧∀≦)ゞ${color.reset} 现在你可以运行：\n\n`
+    doneMessage += chalk.green('创建完成 (≧∀≦)ゞ') + ' 现在你可以运行：\n\n'
     doneMessage += `  cd ${projectName}\n`
     doneMessage += `  npm install\n`
     doneMessage += `  code .`
 
     prompts.outro(doneMessage)
-
-    // if (openVSCode) {
-    //     shell.cd(projectName)
-    //     shell.exec('code .')
-    // }
 }
 init()

@@ -1,100 +1,87 @@
 const prompts = require('@clack/prompts')
+const chalk = require('chalk')
 const webpack = require('webpack')
 const path = require('path')
 const fs = require('fs')
-const packageJson = require('../package.json')
+const cckPackage = require('../package.json')
 
 
-// 颜色代码
-const color = {
-    reset: '\x1b[0m',   // 重置颜色
-    bold: '\x1b[1m',    // 粗体
-    gray: '\x1b[90m',   // 灰色
-    red: '\x1b[31m',    // 红色
-    yellow: '\x1b[33m', // 黄色
-    green: '\x1b[32m',  // 绿色
-    cyan: '\x1b[36m',   // 青色
-    blue: '\x1b[34m',   // 蓝色
-}
+// 打包控件
+module.exports = async (inputFilePath) => {
+
+    prompts.intro(chalk.blue.bold('CoCoKit') + chalk.gray('  v'+cckPackage.version))
+
+    const load = prompts.spinner()
+    load.start('正在打包..')
 
 
-module.exports = async (filePath) => {
-    
-    prompts.intro(`${color.blue}${color.bold}CoCoKit v${packageJson.version}${color.reset}`)
-
-    // 获取 webpack 配置文件
-    let webpackConfig
-    try {
-        const webpackConfigPath = path.resolve(process.cwd(), 'webpack.config.js')
-        webpackConfig = require(webpackConfigPath)
-    } catch (error) {
-        console.log(error)
-        prompts.cancel("读取 webpack.config.js 配置文件出错")
-        return process.exit(0)
+    // 读取 webpack 配置文件
+    const webpackConfigPath = path.resolve(process.cwd(), 'webpack.config.js')
+    if (!fs.existsSync(webpackConfigPath)) {
+        load.stop('已停止打包')
+        prompts.outro(chalk.red('未找到 webpack.config.js 配置文件'))
+        return process.exit(1)
     }
+    const webpackConfig = require(webpackConfigPath)
 
-    // 获取控件 package.json 配置文件
-    let widgetPackageJson
-    try {
-        const widgetPackageJsonPath = path.resolve(process.cwd(), 'package.json')
-        widgetPackageJson = require(widgetPackageJsonPath)
-    } catch (error) {
-        console.log(error)
-        prompts.cancel("读取 package.json 配置文件出错")
-        return process.exit(0)
+
+    // 读取 package.json 配置文件
+    const widgetPackageJsonPath = path.resolve(process.cwd(), 'package.json')
+    if (!fs.existsSync(widgetPackageJsonPath)) {
+        load.stop('已停止打包')
+        prompts.outro(chalk.red('未找到 package.json 配置文件'))
+        return process.exit(1)
     }
+    const widgetPackageJson = require(widgetPackageJsonPath)
 
 
-    // 获取控件路径
-    let widgetPath
-    try {
-        widgetPath = path.resolve(process.cwd(), filePath)
-        fs.statSync(widgetPath)
-    } catch (error) {
-        console.log(error)
-        prompts.cancel("没有找到控件文件，请检查路径是否正确")
-        return process.exit(0)
+    // 获取完整的文件路径
+    let fullFilePath = path.resolve(process.cwd(), inputFilePath)
+    if (!fs.existsSync(fullFilePath)) {
+        load.stop('已停止打包')
+        prompts.outro(chalk.red(`未找到文件 [${inputFilePath}]`))
+        return process.exit(1)
     }
 
 
-    // 读取控件文件
+    // 读取文件
     let widgetFiles = []
-    if (fs.statSync(widgetPath).isDirectory()) {
-        const files = fs.readdirSync(widgetPath)
-        files.forEach(file => {
+    if (fs.statSync(fullFilePath).isDirectory()) {
+        fs.readdirSync(fullFilePath).forEach(file => {
             if (path.extname(file) === '.jsx') {
-                widgetFiles.push(path.join(widgetPath, file))
+                widgetFiles.push(path.resolve(fullFilePath, file))
             }
         })
-    } else if (path.extname(widgetPath) === '.jsx') {
-        widgetFiles.push(widgetPath)
-    } else {
-        prompts.cancel('提供的路径不是 jsx 文件')
-        return process.exit(0)
+    } 
+    else if (path.extname(fullFilePath) === '.jsx') {
+        widgetFiles = [fullFilePath]
+    } 
+    else {
+        load.stop('已停止打包')
+        prompts.outro(chalk.red(`文件 [${inputFilePath}] 不是 jsx 文件`))
+        return process.exit(1)
     }
 
 
     // 开始打包
     let widgetCount = 0
     const startTime = Date.now()
-    const load = prompts.spinner()
-    load.start(`正在打包控件`)
 
-
-    // 使用 Promise 创建打包任务
+    // 记录每个控件的构建输出
+    const buildOutputs = []
+    
     const buildPromises = widgetFiles.map(widgetFilePath => {
         return new Promise((resolve, reject) => {
             // 读取控件版本号
-            const widgetFileContent = fs.readFileSync(widgetFilePath, 'utf8')
-            const versionMatch = widgetFileContent.match(/version\s*:\s*['"]([^'"]+)['"]/)
-            const widgetVersion = versionMatch ? versionMatch[1] : ''
+            const versionMatch = fs.readFileSync(widgetFilePath, 'utf8').match(/version\s*:\s*['"]([^'"]+)['"]/)
+            const widgetVersion = versionMatch?.[1] ?? ''
 
-            // 构建文件名
-            const prefixText = widgetPackageJson.build_config['前缀标签'] || ''
-            const addVersion = widgetPackageJson.build_config['加版本号'] || false
-            const widgetFileName = prefixText + '_' + path.basename(widgetFilePath, '.jsx')
+            // 构建输出的文件名
+            const prefixText = widgetPackageJson?.build_config?.前缀标签 || ''
+            const addVersion = widgetPackageJson?.build_config?.加版本号 || false
+            const widgetFileName = `${prefixText ? prefixText+'_' : ''}${path.basename(widgetFilePath, '.jsx')}`
             const outputFileName = `${widgetFileName}${addVersion ? `_${widgetVersion}` : ''}.js`
-            
+
             // 更新 Webpack 配置
             webpackConfig.entry = widgetFilePath
             webpackConfig.output.filename = outputFileName
@@ -106,11 +93,10 @@ module.exports = async (filePath) => {
             // 运行 Webpack
             webpack(webpackConfig, (err, stats) => {
                 if (err || stats.hasErrors()) {
-                    if (err) {
-                        reject({ widget: widgetFileName, info: err })
-                    } else {
-                        reject({ widget: widgetFileName, info: stats.toJson().errors })
-                    }
+                    reject({ 
+                        widget: widgetFileName, 
+                        msg: err || stats.toJson().errors 
+                    })
                     return
                 }
                 // 获取输出路径
@@ -137,34 +123,31 @@ module.exports = async (filePath) => {
         })
     })
 
-    // 记录构建信息
-    const buildOutputs = []
 
     // 执行打包任务
     Promise.all(buildPromises)
     .then(() => {
-        load.stop(`打包完成！`)
+        load.stop('打包完成! (/≧▽≦)/')
 
-        // 输出所有构建信息
-        console.log(`${color.gray}│${color.reset}`)
+        // 输出构建信息
+        console.log(chalk.gray('│'))
         buildOutputs.forEach(({ path, maxLength, version, fileSize }) => { 
-            console.log(`${color.gray}│${color.reset}  ${color.bold}${path.padEnd(maxLength)} ${color.reset}\t${color.cyan}v${version}\t${color.gray}${fileSize} kB${color.reset}`)
+            console.log(chalk.gray('│  ') + chalk.bold(path.padEnd(maxLength)) + chalk.cyan(`\tv${version}\t`) + chalk.gray(`${fileSize} kB`))
         })
 
         // 输出打包信息
         const duration = ((Date.now() - startTime) / 1000).toFixed(2)
-        prompts.outro(`${color.green}共打包 ${widgetCount} 个控件 ${color.gray}耗时 ${duration}s${color.reset}`)
+        prompts.outro(chalk.green(`共打包 ${widgetCount} 个控件  `) + chalk.gray(`耗时 ${duration}s`))
     })
     .catch(error => {
-        load.stop('已停止打包')
-        prompts.outro(`${color.red}控件 [${error.widget}] 打包失败${color.reset}`)
+        load.stop('打包出错啦')
+        prompts.outro(chalk.red(`控件 [${error.widget}] 打包失败`))
         
-        if (Array.isArray(error.info)) {
-            error.info.forEach(info => {
-                console.error(info.message)
-            })
+        // 输出错误信息
+        if (Array.isArray(error.msg)) {
+            error.msg.forEach(msg => console.error(msg.message))
         } else {
-            console.error(error.info)
+            console.error(error.msg)
         }
         console.log()
     })

@@ -1,5 +1,5 @@
 {
     "name": "@cocokit/packages",
-    "private": true,
-    "dependencies": {}
+    "description": "CoCoKit 项目包",
+    "private": true
 }

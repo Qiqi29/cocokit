@@ -1,6 +1,6 @@
-// 积木颜色
+/** 常用的积木颜色 */
 export const Color = {
-    // 自定义
+    // 常用
     blue: ' #4A9AFA',
     blue_light: ' #62B7FF',
     green: ' #07AFC1',
@@ -18,7 +18,7 @@ export const Color = {
     props: ' #E76CEA',
 }
 
-// 属性类型
+/** 数据类型 */
 export const VType = {
     string: 'string',
     number: 'number',
@@ -29,26 +29,43 @@ export const VType = {
     any: ['string', 'number', 'boolean', 'color', 'array', 'object'],
 }
 
-// 编辑器类型
+/** 编辑器类型 */
 export const EType = {
+    /** 多行文本输入框 */
     TextArea: 'TextArea',
-    Option: 'OptionSwitch',
-    Slider: 'NumberSlider',
-    TextGroup: 'TextWidgetTextGroup',
-    ButtonGroup: 'ButtonTextGroup',
-    Align: 'Align',
-    HorAlign: 'HorizontalAlign',
-    VerAlign: 'VerticalAlign',
-    Direction: 'SliderDirection',
+    /** 富文本编辑器 */
     RichText: 'RichTextEditor',
+    /** 选项切换选择器（需配置 dropdown） */
+    OptionSwitch: 'OptionSwitch',
+    /** 数字滑动条 */
+    Slider: 'NumberSlider',
+    /** 对齐方式选择器 */
+    Align: 'Align',
+    /** 水平对齐选择器 */
+    HorAlign: 'HorizontalAlign',
+    /** 垂直对齐选择器 */
+    VerAlign: 'VerticalAlign',
+    /** 方向选择器 */
+    Direction: 'SliderDirection',
+    /** 文本组配置 */
+    TextGroup: 'TextWidgetTextGroup',
+    /** 按钮组配置 */
+    ButtonGroup: 'ButtonTextGroup',
+    /** 音量滑动条 */
     AudioVolume: 'AudioVolume',
+    /** 音速滑动条 */
     AudioRate: 'AudioRate',
+    /** HTTP请求头编辑器 */
     HttpHeader: 'HttpHeader',
 }
 
 
-// 类型推断
-export function getType(value) {
+
+/**
+ * 获取数据的类型
+ * @param value 数据
+ */
+export function getType(value: any) {
     if (typeof value === 'number') return 'number'
     if (typeof value === 'boolean') return 'boolean'
     if (isColor(value)) return 'color'
@@ -60,48 +77,26 @@ export function getType(value) {
 // 颜色正则
 const COLOR_REGEX = /^#([A-Fa-f0-9]{3,4}|[A-Fa-f0-9]{6}|[A-Fa-f0-9]{8})$|^rgba?\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*(,\s*[\d.]+)?\s*\)$/;
 
-// 判断是否为颜色值
-export function isColor(string) {
+/**
+ * 判断字符串是否为颜色值
+ * @param string 字符串
+ */
+export function isColor(string: string) {
     return COLOR_REGEX.test(string) || string === 'transparent'
 }
 
-
-// 验证 URL
-export function isUrl(string) {
-    const pattern = /^https?:\/\/.+/
-    return pattern.test(string)
+/**
+ * 判断字符串是否为 URL
+ * @param string 字符串
+ */
+export function isUrl(string: string) {
+    return /^https?:\/\/.+/.test(string)
 }
 
-
-// 修正换行符
-export function replaceNewline(content) {
+/**
+ * 替换字符串中的 `\\n` 为 `\n`
+ * @param content 字符串内容
+ */
+export function replaceNewline(content: string) {
     return content.replace(/\\n/g, '\n')
-}
-
-
-// 控件日志输出
-export class WiegetLog {
-    constructor() {}
-    
-    #replaceData(args) {
-        return args.map(arg => {
-            if (typeof arg === 'object') {
-                return JSON.stringify(arg, null, 2)
-            }
-            return arg
-        }).join(' ')
-    }
-    
-    info(thisWidget, ...args) {
-        console.log(...args)
-        thisWidget.widgetLog(this.#replaceData(args))
-    }
-    warn(thisWidget, ...args) {
-        console.warn(...args)
-        thisWidget.widgetWarn(this.#replaceData(args))
-    }
-    error(thisWidget, ...args) {
-        console.error(...args)
-        thisWidget.widgetError(this.#replaceData(args))
-    }
 }

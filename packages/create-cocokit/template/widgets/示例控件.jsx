@@ -1,7 +1,7 @@
 // 从 cocokit 中导入所需的功能
-import { CoCoVisibleWidget, WiegetLog, Color, EType, VType } from 'cocokit'
-const widget = new CoCoVisibleWidget()  // 创建可见控件实例，不可见控件通过 CoCoInvisibleWidget 创建
-const Log = new WiegetLog()             // 控件日志输出，可以在编辑器和控制台中同时输出信息
+import { CoCoWidget, WiegetLog, Color, EType, VType } from 'cocokit'
+const widget = new CoCoWidget()  // 创建可见控件实例，不可见控件通过 CoCoInvisibleWidget 创建
+const Log = new WiegetLog()      // 控件日志输出，可以在编辑器和控制台中同时输出信息
 
 
 
@@ -61,20 +61,20 @@ widget.inMethod('methodKeyin', function (data) {
 
 
 // 渲染控件
-widget.render(function () { 
-    return (<>
-        <div className={this.__widgetId}>
-            <span>{this.text}</span>
-        </div>
+widget.render(function () { return (
+<>
+    <div className={this.__widgetId}>
+        <span>{this.text}</span>
+    </div>
 
-        <style>{`
-            .${this.__widgetId} {
-                width: 100%;
-                height: 100%;
-            }
-        `}</style>
-    </>)
-})
+    <style>{`
+        .${this.__widgetId} {
+            width: 100%;
+            height: 100%;
+        }
+    `}</style>
+</>
+)})
 
 
 // 导出控件

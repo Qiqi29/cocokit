@@ -1,3 +1,8 @@
+/**
+ * Webpack 打包配置
+ * 此处用来测试打包程序，可同步更新到 create-cocokit 模板中
+ */
+
 const path = require('path')
 const webpack = require('webpack')
 const TerserPlugin = require('terser-webpack-plugin')

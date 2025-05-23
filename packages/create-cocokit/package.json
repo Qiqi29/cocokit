@@ -2,10 +2,13 @@
     "name": "create-cocokit",
     "version": "0.1.4",
     "description": "CoCoKit 创建程序",
-    "author": "Qiqi29",
+    "author": {
+        "name": "Qiqi29"
+    },
     "keywords": [
         "cocokit",
-        "coco"
+        "coco",
+        "widget"
     ],
     "files": [
         "bin",
@@ -17,7 +20,8 @@
     "scripts": {},
     "dependencies": {
         "@clack/prompts": "^0.10.1",
-        "shelljs": "^0.10.0"
+        "shelljs": "^0.10.0",
+        "chalk": "^4.1.2"
     },
     "license": "MIT"
 }
