@@ -77,6 +77,24 @@ class BaseWidget {
     }
 
     /**
+     * 设置属性的类型（cocokit 会自动推断参数的类型，部分参数需要自行设置)
+     * @param type 类型
+     */
+    type(type: string) {
+        this.currentProp.valueType = type
+        return this
+    }
+
+    /**
+     * 设置属性的值检查
+     * @param type 检查的类型
+     */
+    check(type: string | string[]) {
+        this.currentProp.checkType = type
+        return this
+    }
+
+    /**
      * 设置属性的编辑器样式
      * @param type 类型 
      * @example

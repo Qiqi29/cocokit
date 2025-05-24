@@ -21,6 +21,7 @@ export const Color = {
 /** 数据类型 */
 export const VType = {
     string: 'string',
+    multilineString: 'multilineString',
     number: 'number',
     boolean: 'boolean',
     color: 'color',
