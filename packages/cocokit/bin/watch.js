@@ -12,6 +12,7 @@ module.exports = async (inputPath) => {
 
     try {
         build(inputPath, {
+            watch: true,
             onBuildStart() {
                 load.start('正在打包..')
             },
@@ -32,12 +33,18 @@ module.exports = async (inputPath) => {
                     return
                 }
                 load.stop('打包完成! (/≧▽≦)/')
+                // 关闭原始模式。spinner 会开启原始模式导致 Ctrl + C 失效。关闭原始模式以重新启用 Ctrl + C。
+                process.stdin.setRawMode(false)
                 console.log(chalk.gray('│'))
                 stats.outputs.forEach(({ path, version, fileSize }) => {
                     console.log(chalk.gray('│  ') + chalk.bold(path.padEnd(stats.maxLength ?? 0)) + chalk.cyan(`\tv${version}\t`) + chalk.gray(`${fileSize} kB`))
                 })
-                prompts.outro(chalk.green(`共打包 ${stats.outputs.length} 个控件  `) + chalk.gray(`耗时 ${stats.time}s`))
+                prompts.log.info(chalk.green(`共打包 ${stats.outputs.length} 个控件  `) + chalk.gray(`耗时 ${stats.time}s`))
             }
+        })
+
+        process.on('exit', () => {
+            prompts.outro('已停止监视')
         })
     } catch (error) {
         load.stop('已停止打包')

@@ -12,6 +12,19 @@ module.exports = async (inputPath) => {
 
     try {
         build(inputPath, {
+            serve: true,
+            onServerCreate(server) {
+                server.logger.info = (...args) => {
+                    const message = args.join(" ")
+                    const matchResult = message.match(/Loopback:([\s]|(\x1B.*?m))*(https?:\/\/.*?\/)/i)
+                    if (matchResult) {
+                        const devServerAddress = matchResult.slice(-1)[0]
+                        prompts.log.info(`开发服务已启动于：${chalk.bold.green(devServerAddress)}`)
+                        prompts.log.info(`你可以访问 ${chalk.bold.green(devServerAddress + "webpack-dev-server")} 来查看输出文件`)
+                        console.log(chalk.gray('│'))
+                    }
+                }
+            },
             onBuildStart() {
                 load.start('正在打包..')
             },
@@ -32,12 +45,20 @@ module.exports = async (inputPath) => {
                     return
                 }
                 load.stop('打包完成! (/≧▽≦)/')
+                // 关闭原始模式。spinner 会开启原始模式导致 Ctrl + C 失效。关闭原始模式以重新启用 Ctrl + C。
+                process.stdin.setRawMode(false)
                 console.log(chalk.gray('│'))
                 stats.outputs.forEach(({ path, version, fileSize }) => {
                     console.log(chalk.gray('│  ') + chalk.bold(path.padEnd(stats.maxLength ?? 0)) + chalk.cyan(`\tv${version}\t`) + chalk.gray(`${fileSize} kB`))
                 })
-                prompts.outro(chalk.green(`共打包 ${stats.outputs.length} 个控件  `) + chalk.gray(`耗时 ${stats.time}s`))
+                prompts.log.info(chalk.green(`共打包 ${stats.outputs.length} 个控件  `) + chalk.gray(`耗时 ${stats.time}s`))
             }
+        })
+
+        ;['SIGINT', 'SIGTERM'].forEach((signal) => {
+            process.on(signal, () => {
+                prompts.outro('已关闭开发服务')
+            })
         })
     } catch (error) {
         load.stop('已停止打包')

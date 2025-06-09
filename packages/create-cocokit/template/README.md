@@ -61,8 +61,12 @@ npm run build ./widgets
 
 
 ### 自动打包
-如果你觉得手动打包很麻烦，可以执行 `npm run watch` 命令，当你保存控件时，就可以自动打包。
+如果你觉得手动打包很麻烦，可以执行 `npm run watch ./widgets` 命令，当你保存控件时，就可以自动打包。
 
+### 自动导入到编辑器、刷新编辑器
+如果你觉得导入控件、刷新编辑器很麻烦，可以执行 `npm run start ./widgets`，并配合控件实时重载控件实现保存控件时，自动导入到编辑器、刷新编辑器。
+
+有关于控件实时重载控件的使用方法，请参考 [配置控件实时重载 | SCW 文档](https://s-lightning.github.io/slightning-coco-widget/docs/tutorial/guides/packaging-optimization#%E9%85%8D%E7%BD%AE%E6%8E%A7%E4%BB%B6%E5%AE%9E%E6%97%B6%E9%87%8D%E8%BD%BD)。
 
 ### 打包配置
 在 `package.json` 文件底部，你可以自定义打包配置，例如自定义打包后的文件名，开启代码压缩。
