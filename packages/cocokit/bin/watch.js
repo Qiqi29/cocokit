@@ -35,11 +35,16 @@ module.exports = async (inputPath) => {
                 load.stop('打包完成! (/≧▽≦)/')
                 // 关闭原始模式。spinner 会开启原始模式导致 Ctrl + C 失效。关闭原始模式以重新启用 Ctrl + C。
                 process.stdin.setRawMode(false)
+                let count = 0
                 console.log(chalk.gray('│'))
-                stats.outputs.forEach(({ path, version, fileSize }) => {
+                stats.outputs.forEach(({ path, version, changed, fileSize }) => {
+                    if (!changed) {
+                        return
+                    }
+                    count++
                     console.log(chalk.gray('│  ') + chalk.bold(path.padEnd(stats.maxLength ?? 0)) + chalk.cyan(`\tv${version}\t`) + chalk.gray(`${fileSize} kB`))
                 })
-                prompts.log.info(chalk.green(`共打包 ${stats.outputs.length} 个控件  `) + chalk.gray(`耗时 ${stats.time}s`))
+                prompts.log.info(chalk.green(`共打包 ${count} 个控件  `) + chalk.gray(`耗时 ${stats.time}s`))
             }
         })
 

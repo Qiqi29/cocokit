@@ -136,6 +136,7 @@ function resolveWidgetToBeBuild(widgetEntryFilePath, buildConfig) {
  * @typedef {Object} BuildOutput
  * @property {string} path
  * @property {string} version
+ * @property {boolean} changed 文件是否改变，初次构建时，该项总是为 true
  * @property {string} fileSize 以 kb 为单位的文件大小
  */
 
@@ -185,6 +186,10 @@ module.exports = function build(inputPath, options) {
 
     /** @type {Record<string, WidgetToBeBuild>} */
     let outputFilenameToWidgetToBeBuildMap = {}
+    /** @type {Record<string, string>} */
+    let lastOutputFileContent = {}
+    /** @type {Record<string, string>} */
+    let outputFileContent = {}
     let maxFilePathLength = 0
 
 
@@ -223,6 +228,11 @@ module.exports = function build(inputPath, options) {
         apply(compiler) {
             compiler.hooks.make.tap('CoCoKit', () => {
                 options?.onBuildStart?.()
+            })
+            compiler.hooks.emit.tap('CoCoKit', compilation => {
+                Object.entries(compilation.assets).forEach(([name, asset]) => {
+                    outputFileContent[name] = String(asset.source())
+                })
             })
         }
     })
@@ -270,10 +280,12 @@ module.exports = function build(inputPath, options) {
             buildOutputs.push({
                 path: relativePath,
                 version: version,
-                fileSize
+                fileSize,
+                changed: outputFileContent[asset.name] != lastOutputFileContent[asset.name]
             })
         })
         options?.onBuildFinish?.(buildStats)
+        lastOutputFileContent = Object.assign({}, outputFileContent)
     }
 
     let compiler = webpack(webpackConfig)

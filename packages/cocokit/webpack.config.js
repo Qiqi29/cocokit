@@ -14,6 +14,9 @@ module.exports = {
     output: {
         filename: 'widget.js',
         path: path.resolve(__dirname, '_build'),
+        library: {
+            type: 'commonjs',
+        },
     },
     devServer: {
         // 没有静态文件
@@ -54,6 +57,10 @@ module.exports = {
         new webpack.ExternalsPlugin('commonjs', [
             'axios', 'utils', 'vika', 'lodash', 'crypto-js', 'websocket', 'antd-mobile'
         ]),
+        // 排除 webpack-dev-server，防止其与控件实时重载控件冲突
+        new webpack.IgnorePlugin({
+            resourceRegExp: /webpack-dev-server/,
+        }),
     ],
     // 构建模式
     mode: 'production',
