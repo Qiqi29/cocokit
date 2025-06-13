@@ -12,7 +12,8 @@ const packageJson = {
     version: "0.1.0",
     scripts: {
         "build": "cocokit build",
-        "watch": "onchange \"**/*.jsx\" -- npm run build {{changed}}"
+        "watch": "cocokit watch",
+        "start": "cocokit serve"
     },
     dependencies: {
         "cocokit": ""
@@ -23,9 +24,9 @@ const packageJson = {
         "@babel/preset-react": "^7.26.3",
         "babel-loader": "^10.0.0",
         "terser-webpack-plugin": "^5.3.14",
-        "onchange": "^7.1.0",
         "webpack": "^5.99.7",
-        "webpack-cli": "^6.0.1"
+        "webpack-cli": "^6.0.1",
+        "webpack-dev-server": "^5.2.2"
     },
     build_config: {
         "前缀标签": "",

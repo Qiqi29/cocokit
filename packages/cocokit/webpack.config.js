@@ -14,6 +14,39 @@ module.exports = {
     output: {
         filename: 'widget.js',
         path: path.resolve(__dirname, '_build'),
+        library: {
+            type: 'commonjs',
+        },
+    },
+    devServer: {
+        // 没有静态文件
+        static: false,
+        devMiddleware: {
+            // 关闭终端日志
+            stats: 'none'
+        },
+        // 允许从 CoCo 和 CP 访问开发服务
+        allowedHosts: [
+            "coco.codemao.cn",
+            "cp.cocotais.cn"
+        ],
+        // 允许跨域请求
+        headers(incomingMessage) {
+            /** @type {{ rawHeaders: string[] }} */
+            const {rawHeaders} = incomingMessage
+            const origin = rawHeaders[rawHeaders.findIndex((value) => {
+                return /origin/i.test(value)
+            }) + 1]
+            return {
+                "Access-Control-Allow-Origin": origin,
+                "Access-Control-Allow-Headers": "*",
+                "Access-Control-Allow-Methods": "GET"
+            }
+        },
+        // 关闭模块热替换
+        hot: false,
+        // 关闭 Live Reload，防止其与控件实时重载控件冲突
+        liveReload: false
     },
     plugins: [
         // 防止全局 this 指向 undefined
@@ -24,6 +57,10 @@ module.exports = {
         new webpack.ExternalsPlugin('commonjs', [
             'axios', 'utils', 'vika', 'lodash', 'crypto-js', 'websocket', 'antd-mobile'
         ]),
+        // 排除 webpack-dev-server，防止其与控件实时重载控件冲突
+        new webpack.IgnorePlugin({
+            resourceRegExp: /webpack-dev-server/,
+        }),
     ],
     // 构建模式
     mode: 'production',
